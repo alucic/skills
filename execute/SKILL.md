@@ -75,7 +75,9 @@ gh issue comment $ISSUE_NUMBER --body "## Step N: [title] ✅
 **Notes**: [anything notable — deviations, surprises, decisions made]"
 ```
 
-3. If the subagent reports a problem that requires a plan change, handle it (see Plan Evolution below).
+3. **Open a pull request for this step's changes, then STOP.** Create a branch off `main` for the step, commit the changes, push, and open a PR that references the plan issue (e.g. `Closes part of #$ISSUE_NUMBER — Step N`). After the PR is open, report the PR URL to the user and **do not proceed to the next step** until the user tells you to continue (typically after they've reviewed and merged the PR). The next step's subagent should start from an updated `main` that includes the merged PR.
+
+4. If the subagent reports a problem that requires a plan change, handle it (see Plan Evolution below).
 
 ### If a subagent fails or reports a blocker
 
