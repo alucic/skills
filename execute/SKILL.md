@@ -75,7 +75,9 @@ gh issue comment $ISSUE_NUMBER --body "## Step N: [title] ✅
 **Notes**: [anything notable — deviations, surprises, decisions made]"
 ```
 
-3. **Open a pull request for this step's changes, then STOP.** Create a branch off `main` for the step, commit the changes, push, and open a PR that references the plan issue (e.g. `Closes part of #$ISSUE_NUMBER — Step N`). After the PR is open, report the PR URL to the user and **do not proceed to the next step** until the user tells you to continue (typically after they've reviewed and merged the PR). The next step's subagent should start from an updated `main` that includes the merged PR.
+3. **Open a pull request for this step's changes, then STOP.** Create a branch off `main` for the step, commit the changes, push, and open a PR that references the plan issue (e.g. `Closes part of #$ISSUE_NUMBER — Step N`). After the PR is open, report the PR URL to the user and **do not proceed to the next step** until the user tells you to continue (typically after they've reviewed and merged the PR).
+
+   **Stay on the step's feature branch after opening the PR. Do NOT `git checkout main` or switch branches.** The user may have review feedback that needs to be addressed on this branch — switching back to main is a gratuitous cleanup step that forces an extra checkout later and risks losing uncommitted work. Only return to main when the user confirms the PR is merged and you are starting the next step; at that point, `git checkout main && git pull --ff-only origin main` before creating the next feature branch.
 
 4. If the subagent reports a problem that requires a plan change, handle it (see Plan Evolution below).
 
