@@ -58,6 +58,32 @@ Guidelines:
 - Dependency arrows with labels (`A -->|"calls"| B`)
 - Style problematic or changing nodes differently
 
+**Mermaid formatting rules (must follow — GitHub's renderer is strict):**
+- **Quote every subgraph title** that contains spaces, punctuation, or em/en-dashes: `subgraph "User intent (unchanged)"` — not `subgraph User intent (unchanged)`.
+- **Quote every edge label**: `A -->|"calls"| B`. Never `A -->|calls| B` when the label has spaces or punctuation.
+- **Wrap node labels in `[ ... ]` with the content quoted** when the label contains parentheses, slashes, colons, commas, `<`, `>`, or em-dashes: `Hub["status.Hub<br/>atomic.Pointer[Snapshot]"]`.
+- **`<br/>` is fine inside a quoted node label.** Do not use it outside quotes.
+- **Node IDs must be simple identifiers** (`[A-Za-z_][A-Za-z0-9_]*`). Never use reserved words (`end`, `subgraph`, `graph`, `style`, `class`) as IDs.
+- **`style` directives go after all node/edge declarations**, one per line, at the diagram's tail.
+- **No `%%` comments inside arrow labels or node labels** — they're invalid mid-statement. Put `%%` comments on their own line.
+- **Keep each statement on its own line.** Don't chain with `;`.
+
+Quick reference — a valid, GitHub-renderable `graph TD` skeleton:
+
+```
+graph TD
+  subgraph "Layer A (new)"
+    A1["Component one<br/>line two"]
+    A2[Other]
+  end
+  subgraph "Layer B"
+    B1[Existing]
+  end
+  A1 -->|"writes"| B1
+  A2 -.->|"reads (async)"| B1
+  style A1 fill:#6f6
+```
+
 ---
 
 ### Section 3: API Interfaces
@@ -95,6 +121,30 @@ Label each arrow with:
 - Direction (use `<-->` for bidirectional)
 
 Show BEFORE and AFTER if the plan changes data flow. Otherwise, one diagram with annotations on what's new.
+
+**Mermaid formatting rules for sequence diagrams (must follow):**
+- **Alias every participant whose display name contains spaces, dots, or punctuation:** `participant Loop as "orchestrator.Loop"`. Never `participant orchestrator.Loop`.
+- **Participant IDs must be simple identifiers.** Reference them by ID in arrows (`Loop->>Hub: ...`), not by display name.
+- **Keep message text on a single line.** Line breaks in messages break parsing; use `<br/>` inside the message string if wrapping is essential.
+- **`%%` comments must be on their own line**, never trailing an arrow.
+- **Self-messages (`A->>A: ...`) are valid** and preferred over fake intermediate nodes when a component is doing internal work.
+- **Use `-->>` for return/response arrows** and `->>` for forward calls; reserve `-->` (dashed without arrowhead) for notes or lifecycle boundaries.
+- Common arrow types: `->>` sync call · `-->>` sync return · `-)` async send · `--)` async return.
+
+Quick reference — a valid, GitHub-renderable `sequenceDiagram` skeleton:
+
+```
+sequenceDiagram
+    participant User
+    participant HTTP as "webui handler"
+    participant FS as "FeatureState"
+    participant Hub as "status.Hub"
+
+    User->>HTTP: GET /
+    HTTP->>FS: Toggles()
+    HTTP->>Hub: Load()
+    HTTP-->>User: rendered HTML
+```
 
 ---
 
